@@ -1,15 +1,50 @@
 <template lang="pug">
-  h1 {{ msg }}
+  h1 {{ Topic }}
 </template>
 
 <script>
+
+import gql from 'graphql-tag'
+
+const Topic = gql`
+  query Topic($ID: String!, $includeSubtopics: Boolean!) {
+    Topic(topicIDNumber: $ID) {
+      id
+      hours
+      translations {
+        title
+      }
+      subtopics @include(if: $includeSubtopics) {
+        subtopicID
+        translations {
+          title
+          essentialIdea
+        }
+      }
+    }
+  }
+
+`
+
 export default {
   name: 'app',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'try',
+      loading: 0
     }
-  }
+  },
+  apollo: {
+    $loadingKey: 'loading',
+    Topic: {
+      query: Topic,
+      variables: {
+        skip: 0,
+        ID: "1",
+        includeSubtopics: true
+      }
+    }
+  },
 }
 </script>
 
